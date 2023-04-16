@@ -23,9 +23,9 @@ class Dinosaur:
     def update(self, user_input):
         if self.dino_run:
             self.run()
-        if self.dino_jump:
+        elif self.dino_jump:
             self.jump()
-        if self.dino_duck:
+        elif self.dino_duck:
             self.duck()
 
         if self.step_index >= 10:
