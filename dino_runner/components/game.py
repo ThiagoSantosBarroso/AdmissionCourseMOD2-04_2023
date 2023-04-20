@@ -1,6 +1,7 @@
 import pygame
 
 from dino_runner.components.dinosaur import Dinosaur
+from dino_runner.components.cloud import Cloud
 from dino_runner.utils.constants import BG, ICON, SCREEN_HEIGHT, SCREEN_WIDTH, TITLE, FPS, DEFAULT_TYPE
 from dino_runner.components.obstacles.obstacle_manager import ObstacleManager
 from dino_runner.components.power_ups.power_up_manager import PowerUpManager
@@ -23,6 +24,7 @@ class Game:
         self.score = 0
         self.death_count = 0
         self.player = Dinosaur()
+        self.clouds = Cloud()
         self.obstacle_manager = ObstacleManager()
         self.power_up_manager = PowerUpManager()
         self.highscore_show = -1
@@ -71,6 +73,7 @@ class Game:
         self.obstacle_manager.update(self)
         user_input = pygame.key.get_pressed()
         self.player.update(user_input)
+        self.clouds.update()
         self.update_score()
         self.power_up_manager.update(self.score, self.game_speed, self.player)
 
@@ -91,8 +94,10 @@ class Game:
         self.draw_background()
         self.obstacle_manager.draw(self.screen)
         self.player.draw(self.screen)
+        self.clouds.draw(self.screen)
         self.draw_power_up_time()
         self.draw_score()
+
         self.power_up_manager.draw(self.screen)
         pygame.display.update()
         pygame.display.flip()
@@ -129,9 +134,9 @@ class Game:
             if event.type == pygame.QUIT:
                 self.playing = False
                 self.running = False
-                pygame.mixer.music.play(0)
             elif event.type == pygame.KEYDOWN:
                 self.run()
+            
 
     def show_menu(self):
         self.screen.fill((255, 255, 255))

@@ -64,7 +64,6 @@ class Dinosaur(Sprite):
             self.dino_duck = False
             self.jump_sound.play(0)
 
-
         if not self.dino_jump and not self.dino_duck:
             self.dino_jump = False
             self.dino_run = True

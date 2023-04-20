@@ -28,6 +28,7 @@ class ObstacleManager:
             cactus_Bird = [bird, cactus]
 
             self.obstacles.append(cactus_Bird[randomization])
+            
 
         for obstacle in self.obstacles:
             obstacle.update(game.game_speed, self.obstacles)
