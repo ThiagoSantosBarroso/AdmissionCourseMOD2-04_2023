@@ -5,16 +5,16 @@ from random import randint
 from dino_runner.utils.constants import CLOUD
 
 X_POS = 1100
-Y_POS = [80, 150, 180]
+Y_POS = [120, 150, 180]
+randomization = randint(0, 2)
 
 class Cloud(Sprite):
 
     def __init__(self):
         self.image = CLOUD
-        self.randomization = randint(0, 1)
         self.cloud_rect = self.image.get_rect()
         self.cloud_rect.x = X_POS
-        self.cloud_rect.y = Y_POS[self.randomization]
+        self.cloud_rect.y = Y_POS[randomization]
 
     def update(self):
         if self.cloud_rect.topright[0] < 0:

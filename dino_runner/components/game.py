@@ -29,6 +29,7 @@ class Game:
         self.power_up_manager = PowerUpManager()
         self.highscore_show = -1
         pygame.mixer.music.load('dino_runner/assets/Other/Music_Theme.wav')
+        pygame.mixer.music.set_volume(0.5)
         pygame.mixer.music.play(0)
 
     def execute(self):
