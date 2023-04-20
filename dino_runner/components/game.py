@@ -1,11 +1,12 @@
 import pygame
 
 from dino_runner.components.dinosaur import Dinosaur
-from dino_runner.utils.constants import BG, ICON, SCREEN_HEIGHT, SCREEN_WIDTH, TITLE, FPS
+from dino_runner.utils.constants import BG, ICON, SCREEN_HEIGHT, SCREEN_WIDTH, TITLE, FPS, DEFAULT_TYPE
 from dino_runner.components.obstacles.obstacle_manager import ObstacleManager
-
+from dino_runner.components.power_ups.power_up_manager import PowerUpManager
 
 FONT_STYLE = "freesansbold.ttf"
+
 
 class Game:
     def __init__(self):
@@ -23,10 +24,14 @@ class Game:
         self.death_count = 0
         self.player = Dinosaur()
         self.obstacle_manager = ObstacleManager()
+        self.power_up_manager = PowerUpManager()
         self.highscore_show = -1
+        pygame.mixer.music.load('dino_runner/assets/Other/Music_Theme.wav')
+        pygame.mixer.music.play(0)
 
     def execute(self):
         self.running = True
+        
         while self.running:
             if not self.playing:
                 self.highscore()
@@ -46,8 +51,10 @@ class Game:
         # Game loop: events - update - draw
         self.playing = True
         self.obstacle_manager.reset_obstacles()
+        self.power_up_manager.reset_power_ups()
         self.game_speed = 20
         self.score = 0
+        pygame.mixer.music.stop()
         
         while self.playing:
             self.events()
@@ -65,6 +72,7 @@ class Game:
         user_input = pygame.key.get_pressed()
         self.player.update(user_input)
         self.update_score()
+        self.power_up_manager.update(self.score, self.game_speed, self.player)
 
     def update_score(self):
         self.score += 1
@@ -83,7 +91,9 @@ class Game:
         self.draw_background()
         self.obstacle_manager.draw(self.screen)
         self.player.draw(self.screen)
+        self.draw_power_up_time()
         self.draw_score()
+        self.power_up_manager.draw(self.screen)
         pygame.display.update()
         pygame.display.flip()
 
@@ -100,11 +110,26 @@ class Game:
 
         self.texting((f"Score: {self.score}"), (1000, 50))
 
+    def draw_power_up_time(self):
+        half_screen_width = SCREEN_WIDTH // 2
+        half_screen_height = 150
+
+        if self.player.has_power_up:
+            time_to_show = round(
+                (self.player.power_up_time - pygame.time.get_ticks()) / 1000, 2)
+            if time_to_show >= 0:
+                self.texting((f"{self.player.type.capitalize()} enabled for {time_to_show} seconds."),(half_screen_width, half_screen_height))
+                
+            else:
+                self.player.has_power_up = False
+                self.player.type = DEFAULT_TYPE
+
     def handle_events_on_menu(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.playing = False
                 self.running = False
+                pygame.mixer.music.play(0)
             elif event.type == pygame.KEYDOWN:
                 self.run()
 
@@ -112,7 +137,6 @@ class Game:
         self.screen.fill((255, 255, 255))
         half_screen_width = SCREEN_WIDTH // 2
         half_screen_height = SCREEN_HEIGHT // 2
-
         if self.death_count == 0:
             self.texting("Press any key to start",
                          (half_screen_width, half_screen_height))
