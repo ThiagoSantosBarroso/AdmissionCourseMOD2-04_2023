@@ -37,7 +37,6 @@ class ObstacleManager:
                     pygame.time.delay(500)
                     game.playing = False
                     game.death_count += 1
-                    print("teste")
                     pygame.mixer.music.play(0)
                     break
                 else:
